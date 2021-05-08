@@ -10,13 +10,37 @@ burgerMenu.addEventListener('click', () => {
 })
 
 
+const btnReport = document.getElementById("btn-reports");
+const btnCategories = document.getElementById("btn-categories");
+const btnBalance = document.getElementById("btn-balance");
+const reportSection = document.getElementById("report-section");
+const formOperation = document.getElementById("form-operation");
+const balanceSection = document.getElementById("balance-section");
+const categoriesSection = document.getElementById("section-categories")
 
 
 
+btnReport.addEventListener("click", () => {
+    
+    balanceSection.classList.add("is-hidden");
+    formOperation.classList.add("is-hidden");
+    reportSection.classList.remove("is-hidden");
+  });
 
 
+  btnBalance.addEventListener('click', () => {
+    balanceSection.classList.remove('is-hidden')
+    reportSection.classList.add('is-hidden')
+    categoriesSection.classList.add('is-hidden')
+    formOperation.classList.add('is-hidden')
+});
 
-
+btnCategories.addEventListener('click', () => {
+    balanceSection.classList.add('is-hidden')
+    reportSection.classList.add('is-hidden')
+    categoriesSection.classList.remove('is-hidden')
+    formOperation.classList.add('is-hidden')
+});
 
 
 //Nueva operación 
