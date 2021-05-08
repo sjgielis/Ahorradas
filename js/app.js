@@ -9,6 +9,7 @@ burgerMenu.addEventListener('click', () => {
     navbarBasicExample.classList.toggle('is-active')
 })
 
+
 const btnReport = document.getElementById("btn-reports");
 const btnCategories = document.getElementById("btn-categories");
 const btnBalance = document.getElementById("btn-balance");
