@@ -1,27 +1,4 @@
 prompt("funciono")
-
-// Function Nav-Burger Responsive
-const burgerMenu = document.getElementById('navbar-burger')
-const navbarBasicExample = document.getElementById('navbarBasicExample')
-
-burgerMenu.addEventListener('click', () => {
-    burgerMenu.classList.toggle('is-active')
-    navbarBasicExample.classList.toggle('is-active')
-})
-
-
-
-
-
-
-
-
-
-
-
-//Nueva operación 
-
-
 const btnNewOperation = document.getElementById('btn-new-operation') 
 const btnCancelOperation = document.getElementById('btn-cancel-operation'); 
 const btnAddOperation = document.getElementById('btn-add-operation');
@@ -36,8 +13,68 @@ const operationDate = document.getElementById('operation-date');
 const sectionReports = document.getElementById('section-reports'); 
 const sectionCategories = document.getElementById('section-categories');
 const editCategorySection = document.getElementById("edit-category-section");
+const btnShowFilters = document.getElementById('btn-show-filters');
+const btnHideFilters = document.getElementById('btn-hide-filters');
+const filters = document.getElementById('filters');
+const sectionBalance = document.getElementById('balance-section');
+const formOperation = document.getElementById('form-operation');
+
+// Funcion Nav-Burger Responsive
+const burgerMenu = document.getElementById('navbar-burger')
+const navbarBasicExample = document.getElementById('navbarBasicExample')
+
+burgerMenu.addEventListener('click', () => {
+    burgerMenu.classList.toggle('is-active')
+    navbarBasicExample.classList.toggle('is-active')
+})
+
+// Funcion Time
+const fechaFiltros = document.getElementById("filters-date");
+const operationDate = document.getElementById("operation-date");
+
+const date = () => {
+    let date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    return `${year}-${month < 10 ? "0" + month : month}-${day < 10 ? "0" + day : day}`
+}
+fechaFiltros.value = date();
+operationDate.value = date();
+
+btnBalance.addEventListener('click', () => {
+    sectionBalance.classList.remove('is-hidden')
+    sectionReports.classList.add('is-hidden')
+    sectionCategories.classList.add('is-hidden')
+    formOperation.classList.add('is-hidden')
+    formEditOperation.classList.add('is-hidden')
+
+});
+
+btnCategories.addEventListener('click', () => {
+    sectionBalance.classList.add('is-hidden')
+    sectionReports.classList.add('is-hidden')
+    sectionCategories.classList.remove('is-hidden')
+    formOperation.classList.add('is-hidden')
+    formEditOperation.classList.add('is-hidden')
+
+});
+
+btnReports.addEventListener('click', () => {
+    sectionBalance.classList.add('is-hidden')
+    sectionReports.classList.remove('is-hidden')
+    sectionCategories.classList.add('is-hidden')
+    formOperation.classList.add('is-hidden')
+    formEditOperation.classList.add('is-hidden')
+    filtrarOperaciones()
+});
 
 
+
+
+
+
+//Nueva operación 
 
 btnNewOperation.addEventListener('click', () => {
     balanceSection.classList.add('is-hidden')
@@ -57,6 +94,24 @@ const resetFormOperation = () => {
     operationCategories.value = categories[0].nombre
     operationDate.value = date();
 }
+
+// funcion mostrar y ocultar filtros
+
+btnHideFilters.addEventListener('click', () => {
+    filters.classList.add('is-hidden')
+    btnHideFilters.classList.add('is-hidden')
+    btnShowFilters.classList.remove('is-hidden')
+})
+btnShowFilters.addEventListener('click', () => {
+    filters.classList.remove('is-hidden')
+    btnHideFilters.classList.remove('is-hidden')
+    btnShowFilters.classList.add('is-hidden')
+})
+
+
+
+
+
 
 let operations = [];
 
@@ -169,3 +224,4 @@ const showSectionOperation = () => {
     formEditOperation.classList.add("is-hidden");
 
 };
+
