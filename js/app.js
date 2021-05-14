@@ -34,6 +34,13 @@ burgerMenu.addEventListener('click', () => {
 // Funcion Time
 const fechaFiltros = document.getElementById("filters-date");
 
+const btnReport = document.getElementById("btn-reports");
+const btnCategories = document.getElementById("btn-categories");
+const btnBalance = document.getElementById("btn-balance");
+const reportSection = document.getElementById("report-section");
+const formOperation = document.getElementById("form-operation");
+const balanceSection = document.getElementById("balance-section");
+const categoriesSection = document.getElementById("section-categories")
 
 const date = () => {
     let date = new Date();
@@ -51,8 +58,14 @@ btnBalance.addEventListener('click', () => {
     sectionCategories.classList.add('is-hidden')
     formOperation.classList.add('is-hidden')
     formEditOperation.classList.add('is-hidden')
-
 });
+
+btnReport.addEventListener("click", () => {
+    balanceSection.classList.add("is-hidden");
+    formOperation.classList.add("is-hidden");
+    reportSection.classList.remove("is-hidden");
+  });
+
 
 btnCategories.addEventListener('click', () => {
     sectionBalance.classList.add('is-hidden')
@@ -60,8 +73,7 @@ btnCategories.addEventListener('click', () => {
     sectionCategories.classList.remove('is-hidden')
     formOperation.classList.add('is-hidden')
     formEditOperation.classList.add('is-hidden')
-
-});
+  });
 
 btnReports.addEventListener('click', () => {
     sectionBalance.classList.add('is-hidden')
@@ -71,6 +83,21 @@ btnReports.addEventListener('click', () => {
     formEditOperation.classList.add('is-hidden')
     filtrarOperaciones()
 });
+
+  btnBalance.addEventListener('click', () => {
+    balanceSection.classList.remove('is-hidden')
+    reportSection.classList.add('is-hidden')
+    categoriesSection.classList.add('is-hidden')
+    formOperation.classList.add('is-hidden')
+});
+
+btnCategories.addEventListener('click', () => {
+    balanceSection.classList.add('is-hidden')
+    reportSection.classList.add('is-hidden')
+    categoriesSection.classList.remove('is-hidden')
+    formOperation.classList.add('is-hidden')
+});
+
 
 //Nueva operación 
 
