@@ -2,6 +2,9 @@ prompt("funciono")
 const btnNewOperation = document.getElementById('btn-new-operation') 
 const btnCancelOperation = document.getElementById('btn-cancel-operation'); 
 const btnAddOperation = document.getElementById('btn-add-operation');
+const btnBalance = document.getElementById('btn-balance');
+const btnCategories = document.getElementById('btn-categories');
+const btnReports = document.getElementById('btn-reports');
 const operationDescription = document.getElementById("operation-description");
 const operationAmount = document.getElementById("operation-amount");
 const operationType = document.getElementById("operation-type");
@@ -30,7 +33,7 @@ burgerMenu.addEventListener('click', () => {
 
 // Funcion Time
 const fechaFiltros = document.getElementById("filters-date");
-const operationDate = document.getElementById("operation-date");
+
 
 const date = () => {
     let date = new Date();
@@ -69,11 +72,6 @@ btnReports.addEventListener('click', () => {
     filtrarOperaciones()
 });
 
-
-
-
-
-
 //Nueva operación 
 
 btnNewOperation.addEventListener('click', () => {
@@ -107,12 +105,6 @@ btnShowFilters.addEventListener('click', () => {
     btnHideFilters.classList.remove('is-hidden')
     btnShowFilters.classList.add('is-hidden')
 })
-
-
-
-
-
-
 let operations = [];
 
 btnAddOperation.addEventListener('click', () => {
@@ -224,4 +216,3 @@ const showSectionOperation = () => {
     formEditOperation.classList.add("is-hidden");
 
 };
-
