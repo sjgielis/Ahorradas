@@ -418,4 +418,55 @@ const deleteCategory = (category) => {
 
 };
 
+//Balance
+const balanceGanancia = document.getElementById('balance-ganancia');
+const balanceTotal = document.getElementById('balance-total');
+const balanceGasto = document.getElementById('balance-gasto');
+
+const balanceData = (operaciones) => {
+    return operaciones.reduce((balance, operacion) => {
+        if (operacion.tipo === 'Ganancia') {
+            return {
+                ...balance,
+                ganancias: balance.ganancias + operacion.monto,
+                total: balance.total + operacion.monto,
+            }
+        }
+
+        if (operacion.tipo === 'Gasto') {
+            return {
+                ...balance,
+                gastos: balance.gastos + operacion.monto,
+                total: balance.total + operacion.monto,
+            }
+        }
+    },
+        {
+            ganancias: 0,
+            gastos: 0,
+            total: 0,
+        }
+    )
+}
+
+
+//Pintar section balance en HTML
+const balanceHTML = (operaciones) => {
+    const objBalance = balanceData(operaciones);
+    balanceTotal.classList.remove('has-text-success', 'has-text-danger')
+
+    if (objBalance.total > 0) {
+        balanceTotal.classList.add('has-text-success');
+        balanceTotal.classList.remove('has-text-danger')
+    }
+    if (objBalance.total < 0) {
+        balanceTotal.classList.remove('has-text-success');
+        balanceTotal.classList.add('has-text-danger')
+    }
+
+    balanceGanancia.innerHTML = `$ ${objBalance['ganancias']}`;
+    balanceGasto.innerHTML = `$ ${objBalance['gastos']}`;
+    balanceTotal.innerHTML = `$${objBalance['total']}`;
+}
+
 
