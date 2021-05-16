@@ -66,7 +66,7 @@
                         <p class="has-text-weight-bold">0</p>
                     </div>
                 </div>
-                <!-- FILTERS -->
+                <!-- filtros -->
                 <div class="tile is-child box fit-content">
                     <div class="columns is-justify-content-space-between is-flex-wrap-wrap mb-0">
                         <p class="subtitle has-text-weight-bold px-4 mb-0">Filtros</p>
@@ -203,6 +203,63 @@
             </div>
         </div>
     </section>
+    
+    <!-- Editar una Nueva Operacion -->
+        <section id="form-edit-operation" class="is-hidden">
+            <div class="box column is-6 is-offset-3 is-10-mobile is-offset-1-mobile px-4 py-4">
+                <h2 class="title is-size-4 has-text-weight-bold">Editar Operación</h2>
+                <div class="field">
+                    <label for="operation-edit-description" class="label">Descripción</label>
+                    <div class="control">
+                        <input id="operation-edit-description" class="input is-small" type="text">
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="operation-edit-amount" class="label">Monto</label>
+                    <div class="control">
+                        <input id="operation-edit-amount" class="input is-small" type="number" value="0">
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="operation-edit-type" class="label">Tipo</label>
+                    <div class="control">
+                        <div class="select is-fullwidth is-small">
+                            <select id="operation-edit-type">
+                                <option value="Gasto">Gasto</option>
+                                <option value="Ganancia">Ganancia</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="operation-edit-categories" class="label">Categorías</label>
+                    <div class="control">
+                        <div class="select is-fullwidth  is-small">
+                            <select id="operation-edit-categories">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="operation-edit-date" class="label">Fecha</label>
+                    <div class="control">
+                        <input id="operation-edit-date" class="input is-small" type="date">
+                    </div>
+                </div>
+                <div class="field is-grouped is-justify-content-flex-end	pt-5">
+                    <p class="control">
+                        <button id="btn-cancel-edit-operation" class="button" onclick="showSectionOperation()">
+                            Cancelar
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button id="btn-edit-operation" class="button is-info is-hovered">
+                            Editar
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </section>
 
     <!-- SECTION CATEGORIES -->
     <section id="section-categories" class="is-hidden">
@@ -221,8 +278,29 @@
         </div>
     </section>
 
+    <!-- INICIO SECCION EDITAR CATEGORIA -->
+        <section id="edit-category-section" class="is-hidden">
+            <div class="box column is-6 is-offset-3 is-10-mobile is-offset-1-mobile px-4 pt-4 pb-6">
+                <h2 class="title is-size-3 has-text-weight-bold">Editar Categoría</h2>
+                <div class="field">
+                    <label for="edit-category-name" class="label">Nombre</label>
+                    <div class="field is-grouped">
+                        <div class="control is-expanded">
+                            <input id="edit-category-name" class="input is-small" type="text">
+                        </div>
+                        <div class="control">
+                            <button id="btn-cancel-edit-category" class="button is-small" onclick="hideEditSection()">
+                                Cancelar
+                            </button>
+                            <button id="btn-edit-category" class="button is-link is-small">Editar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     <!-- Seccion Reportes -->
-    <section id="report-section" class="is-hidden">
+    <section id="section-reports" class="is-hidden">
       <div class="box column is-6 is-offset-3 is-10-mobile is-offset-1-mobile px-5 py-4 fit-content">
         <div class="field">
           <p class="tile is-size-3 has-text-weight-bold">Reportes</p>
@@ -237,9 +315,56 @@
             <p class="subtitle is-size-6 is-size-7-mobile has-text-centered">Prueba agregando más operaciones</p>
           </div>
         </div>
+
+        <article id="with-reports" class="is-hidden mb-2">
+                    <div class="column has-text-weight-medium m-0 mt-6 ">
+                        <!-- RESUMEN -->
+                        <p class="subtitle has-text-weight-medium">Resumen</p>
+                        <div class="columns is-mobile m-0">
+                            <div class="column is-three-quarters">Categoría con mayor ganancia</div>
+                            <div class="column" id="resumen-categ-mayor-ganancia"></div>
+                        </div>
+                        <div class="columns is-mobile m-0">
+                            <div class="column is-three-quarters">Categoría con mayor gasto</div>
+                            <div class="column" id="resumen-categ-mayor-gasto"></div>
+                        </div>
+                        <div class="columns is-mobile m-0">
+                            <div class="column is-three-quarters">Categoría con mayor balance</div>
+                            <div class="column" id="resumen-categ-mayor-balance"></div>
+                        </div>
+                        <div class="columns is-mobile m-0">
+                            <div class="column is-half">Mes con mayor ganancia</div>
+                            <div class="column" id="resumen-mes-mayor-ganancia"></div>
+                        </div>
+                        <div class="columns is-mobile m-0">
+                            <div class="column is-half">Mes con mayor gasto</div>
+                            <div class="column" id="resumen-mes-mayor-gasto"></div>
+                        </div>
+                    </div>
+                    <!-- TOTALES POR CATEGORIA -->
+                    <p class="subtitle has-text-weight-medium mt-6">Totales por categorías</p>
+                    <div class="columns has-text-weight-medium m-0 is-mobile">
+                        <div class="column has-text-centered is-3">Categoría</div>
+                        <div class="column has-text-centered is-3">Ganancias</div>
+                        <div class="column has-text-centered is-3">Gastos</div>
+                        <div class="column has-text-centered is-3">Balance</div>
+                    </div>
+                    <div id="report-categories-total"></div>
+
+                    <!-- TOTALES POR MES -->
+                    <p class="subtitle has-text-weight-medium mt-6">Totales por mes</p>
+                    <div class="columns has-text-weight-medium m-0 is-mobile">
+                        <div class="column has-text-centered is-3">Mes</div>
+                        <div class="column has-text-centered is-3">Ganancias</div>
+                        <div class="column has-text-centered is-3">Gastos</div>
+                        <div class="column has-text-centered is-3">Balance</div>
+                    </div>
+                    <div id="report-mes-total"></div>
+
+                </article>
       </div>
-      </div>
-      </div> 
+      <!-- </div>
+      </div>  -->
     </section>
 
 

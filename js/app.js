@@ -34,14 +34,6 @@ burgerMenu.addEventListener('click', () => {
 // Funcion Time
 const fechaFiltros = document.getElementById("filters-date");
 
-const btnReport = document.getElementById("btn-reports");
-const btnCategories = document.getElementById("btn-categories");
-const btnBalance = document.getElementById("btn-balance");
-const reportSection = document.getElementById("report-section");
-const formOperation = document.getElementById("form-operation");
-const balanceSection = document.getElementById("balance-section");
-const categoriesSection = document.getElementById("section-categories")
-
 const date = () => {
     let date = new Date();
     let day = date.getDate();
@@ -60,10 +52,13 @@ btnBalance.addEventListener('click', () => {
     formEditOperation.classList.add('is-hidden')
 });
 
-btnReport.addEventListener("click", () => {
-    balanceSection.classList.add("is-hidden");
+btnReports.addEventListener("click", () => {
+    sectionBalance.classList.add("is-hidden");
     formOperation.classList.add("is-hidden");
-    reportSection.classList.remove("is-hidden");
+    sectionReports.classList.remove("is-hidden");
+    sectionCategories.classList.add("is-hidden");
+    formEditOperation.classList.add('is-hidden')
+    filtrarOperaciones()
   });
 
 
@@ -75,41 +70,18 @@ btnCategories.addEventListener('click', () => {
     formEditOperation.classList.add('is-hidden')
   });
 
-btnReports.addEventListener('click', () => {
-    sectionBalance.classList.add('is-hidden')
-    sectionReports.classList.remove('is-hidden')
-    sectionCategories.classList.add('is-hidden')
-    formOperation.classList.add('is-hidden')
-    formEditOperation.classList.add('is-hidden')
-    filtrarOperaciones()
-});
-
-  btnBalance.addEventListener('click', () => {
-    balanceSection.classList.remove('is-hidden')
-    reportSection.classList.add('is-hidden')
-    categoriesSection.classList.add('is-hidden')
-    formOperation.classList.add('is-hidden')
-});
-
-btnCategories.addEventListener('click', () => {
-    balanceSection.classList.add('is-hidden')
-    reportSection.classList.add('is-hidden')
-    categoriesSection.classList.remove('is-hidden')
-    formOperation.classList.add('is-hidden')
-});
-
 
 //Nueva operación 
 
 btnNewOperation.addEventListener('click', () => {
-    balanceSection.classList.add('is-hidden')
-    reportSection.classList.add('is-hidden')
+    sectionBalance.classList.add('is-hidden')
+    sectionReports.classList.add('is-hidden')
     formOperation.classList.remove('is-hidden')
 })
 
 btnCancelOperation.addEventListener('click', () => {
     formOperation.classList.add('is-hidden')
-    balanceSection.classList.remove('is-hidden')
+    sectionBalance.classList.remove('is-hidden')
 })
 
 const resetFormOperation = () => {
@@ -157,7 +129,7 @@ btnAddOperation.addEventListener('click', () => {
 
     resetFormOperation();
     formOperation.classList.add('is-hidden')
-    balanceSection.classList.remove('is-hidden')
+    sectionBalance.classList.remove('is-hidden')
 })
 
 
@@ -218,7 +190,7 @@ operationsHtml(operations);
 //Editar una nueva operacion
 const btnEditOperation = document.getElementById('btn-edit-operation');
 const formEditOperation = document.getElementById('form-edit-operation') 
-const operationEditDescription = document.getElementById("operation-edit-description");
+const operationEditDescription = document.getElementById("operation-edit-description")
 const operationEditAmount = document.getElementById("operation-edit-amount");
 const operationEditType = document.getElementById("operation-edit-type");
 const operationEditCategories = document.getElementById("operation-edit-categories");
@@ -229,7 +201,7 @@ const hideSectionsOperation = () => {
     sectionCategories.classList.add("is-hidden");
     sectionReports.classList.add("is-hidden");
     formOperation.classList.add("is-hidden");
-    balanceSection.classList.add("is-hidden");
+    sectionBalance.classList.add("is-hidden");
     editCategorySection.classList.add("is-hidden");
     formEditOperation.classList.remove("is-hidden");
 };
@@ -238,8 +210,212 @@ const showSectionOperation = () => {
     sectionCategories.classList.add("is-hidden");
     sectionReports.classList.add("is-hidden");
     formOperation.classList.add("is-hidden");
-    balanceSection.classList.remove("is-hidden");
+    sectionBalance.classList.remove("is-hidden");
     editCategorySection.classList.add("is-hidden");
     formEditOperation.classList.add("is-hidden");
 
 };
+
+//EDITAR operaciones
+let position; 
+const editOperation = (operation) => {
+    hideSectionsOperation();
+    position = operations.findIndex((e) => e.id == operation);
+    operationEditDescription.value = operations[position].descripcion
+    operationEditAmount.value = operations[position].monto
+    operationEditType.value = operations[position].tipo
+    operationEditCategories.value = operations[position].categoria
+    operationEditDate.value = operations[position].fecha
+
+    if ( operationEditType.value === 'Gasto') {
+        operationEditAmount.value = Number(operations[position].monto) * -1;
+    }
+
+    return position;
+};
+
+btnEditOperation.addEventListener('click', () => {
+    operations[position].descripcion = operationEditDescription.value;
+    operations[position].monto = operationEditAmount.value;
+    operations[position].tipo = operationEditType.value;
+    operations[position].categoria = operationEditCategories.value;
+    operations[position].fecha = operationEditDate.value;
+
+    if (operations[position].tipo === 'Gasto') {
+        operations[position].monto = Number(operationEditAmount.value) * -1;
+    }
+
+
+    localStorage.setItem('operacionesStorage', JSON.stringify(operations));
+    operationsHtml(operations);
+    balanceHTML(operations);
+    filtrarOperaciones();
+    reportes(operations);
+
+    showSectionOperation();
+})
+
+//eliminar operaciones
+const deleteOperation = (operation) => {
+    const value = operations.findIndex((elem) => elem.id == operation);
+    if (value >= 0) {
+        operations.splice(value, 1);
+        localStorage.setItem('operacionesStorage', JSON.stringify(operations));
+        operationsHtml(operations);
+        balanceHTML(operations);
+        filtrarOperaciones();
+        reportes(operations);
+    }
+
+};
+
+//Seccion operaciones
+const inputCategories = document.getElementById('category-name'); 
+const btnAddCategories = document.getElementById('btn-add-category');
+const categoriesList = document.getElementById('categories-list'); 
+const filtersCategories = document.getElementById('filters-categories'); 
+const inputEditCategory = document.getElementById("edit-category-name");
+const btnEditCategory = document.getElementById("btn-edit-category");
+const btnCancelEditCategory = document.getElementById('btn-cancel-edit-category')
+
+
+
+
+//Array DEL OBJETO CATEGORIAS
+let categories = [
+    { id: uuid.v4(), nombre: "Comida" },
+    { id: uuid.v4(), nombre: "Educacion" },
+    { id: uuid.v4(), nombre: "Salidas" },
+    { id: uuid.v4(), nombre: "Servicios" },
+    { id: uuid.v4(), nombre: "Trabajo" },
+    { id: uuid.v4(), nombre: "Transporte" }
+];
+
+// pintar en la seccion categorias en los select
+const categoriesHTML = (categories) => {
+    categoriesList.innerHTML = '';
+    for (let i = 0; i < categories.length; i++) {
+        const categoria = `
+    <div class="columns m-0 is-justify-content-space-between is-9 is-offset-3">
+      <div class="column is-size-7 is-10"><span class="has-background-info-dark has-text-white radius p-1">${categories[i].nombre}</span></div>
+      <div class="column is-2 px-0">
+      <a href="#" class="is-size-7 mr-2" onclick="editCategory('${categories[i].id}')" >Editar</a>
+      <a href="#" class="is-size-7" onclick="deleteCategory('${categories[i].id}')">Eliminar</a>
+      </div>
+    </div>
+    `
+        categoriesList.insertAdjacentHTML('beforeend', categoria)
+    }
+}
+
+categories = JSON.parse(localStorage.getItem('categoriasStorage')) ?? categories
+categoriesHTML(categories);
+
+//pintar el HTML en la seccion de nueva operacion y filtros
+const categoriesSelect = (categories) => {
+    operationCategories.innerHTML = '';
+    filtersCategories.innerHTML = `<option>Todas</option>`;
+    for (let i = 0; i < categories.length; i++) {
+        const categoria = `
+       <option>${categories[i].nombre}</option>
+        `
+        operationCategories.insertAdjacentHTML('beforeend', categoria);
+        filtersCategories.insertAdjacentHTML('beforeend', categoria);
+        operationEditCategories.insertAdjacentHTML('beforeend', categoria);
+    }
+}
+categoriesSelect(categories);
+
+
+//Funcion boton AGREGAR en categorias
+btnAddCategories.addEventListener('click', () => {
+    const newCategory = inputCategories.value;
+    categories.push({ id: uuid.v4(), nombre: newCategory });
+
+    localStorage.setItem('categoriasStorage', JSON.stringify(categories))
+    const getCategoriesStorage = JSON.parse(localStorage.getItem('categoriasStorage'))
+    categoriesHTML(getCategoriesStorage);
+    categoriesSelect(getCategoriesStorage);
+
+    inputCategories.value = '';
+});
+
+
+//esconder seccion editar categoria
+const hideSectionsEdit = () => {
+    sectionCategories.classList.add("is-hidden");
+    sectionReports.classList.add("is-hidden");
+    formOperation.classList.add("is-hidden");
+    sectionBalance.classList.add("is-hidden");
+    editCategorySection.classList.remove("is-hidden");
+};
+
+const hideEditSection = () => {
+    sectionCategories.classList.remove("is-hidden");
+    sectionReports.classList.add("is-hidden");
+    formOperation.classList.add("is-hidden");
+    sectionBalance.classList.add("is-hidden");
+    editCategorySection.classList.add("is-hidden");
+};
+
+
+
+//editar categoria
+let resultado;
+const editCategory = (category) => {
+    hideSectionsEdit();
+    const index = categories.findIndex((elem) => elem.id === category);
+    inputEditCategory.value = categories[index].nombre;
+    resultado = { i: index, valor: inputEditCategory.value };
+    return resultado
+};
+
+btnEditCategory.addEventListener("click", () => {
+    categories[resultado.i].nombre = inputEditCategory.value;
+    localStorage.setItem("categoriasStorage", JSON.stringify(categories));
+    categoriesHTML(categories);
+    categoriesSelect(categories);
+
+    operations.forEach(() => {
+        const posicion = operations.findIndex(
+            (operation) => operation.categoria === resultado.valor);
+        if (posicion >= 0) {
+            operations[posicion].categoria = inputEditCategory.value
+            localStorage.setItem("operacionesStorage", JSON.stringify(operations))
+        }
+        operationsHtml(operations);
+        balanceHTML(operations);
+    });
+
+    hideEditSection();
+});
+
+
+
+//eliminar categoria
+const deleteCategory = (category) => {
+    const categoryName = categories.find((elem) => elem.id === category);
+
+    const value = categories.findIndex((elem) => elem.id === category);
+    if (value >= 0) {
+        categories.splice(value, 1);
+        localStorage.setItem('categoriasStorage', JSON.stringify(categories))
+        categoriesHTML(categories);
+        categoriesSelect(categories);
+    }
+
+    operations.forEach(() => {
+        const index = operations.findIndex(
+            (operation) => operation.categoria === categoryName.nombre
+        );
+        if (index >= 0) {
+            operations.splice(index, 1);
+            localStorage.setItem("operacionesStorage", JSON.stringify(operations))
+        }
+        operationsHtml(operations);
+        balanceHTML(operations);
+    });
+
+};
+
+
