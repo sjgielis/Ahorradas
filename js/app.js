@@ -21,6 +21,31 @@ const btnHideFilters = document.getElementById('btn-hide-filters');
 const filters = document.getElementById('filters');
 const sectionBalance = document.getElementById('balance-section');
 const formOperation = document.getElementById('form-operation');
+//Operaciones
+const inputCategories = document.getElementById('category-name'); 
+const btnAddCategories = document.getElementById('btn-add-category');
+const categoriesList = document.getElementById('categories-list'); 
+const filtersCategories = document.getElementById('filters-categories'); 
+const inputEditCategory = document.getElementById("edit-category-name");
+const btnEditCategory = document.getElementById("btn-edit-category");
+const btnCancelEditCategory = document.getElementById('btn-cancel-edit-category')
+// Balance
+const balanceGanancia = document.getElementById('balance-ganancia');
+const balanceTotal = document.getElementById('balance-total');
+const balanceGasto = document.getElementById('balance-gasto');
+// Filtros
+const filtersType = document.getElementById("filters-type");
+const filtersOrder = document.getElementById("filters-order");
+// reportes
+const conReportes = document.getElementById('with-reports');
+const sinReportes = document.getElementById('without-reports');
+const resumenCategGanancia = document.getElementById('resumen-categ-mayor-ganancia');
+const resumenCategGasto = document.getElementById('resumen-categ-mayor-gasto');
+const resumenCategBalance= document.getElementById('resumen-categ-mayor-balance');
+const resumenMesGanancia = document.getElementById('resumen-mes-mayor-ganancia');
+const resumenMesGasto = document.getElementById('resumen-mes-mayor-gasto');
+const reporteTotalCateg = document.getElementById('report-categories-total');
+const reporteTotalMes = document.getElementById('report-mes-total');
 
 // Funcion Nav-Burger Responsive
 const burgerMenu = document.getElementById('navbar-burger')
@@ -269,18 +294,6 @@ const deleteOperation = (operation) => {
 
 };
 
-//Seccion operaciones
-const inputCategories = document.getElementById('category-name'); 
-const btnAddCategories = document.getElementById('btn-add-category');
-const categoriesList = document.getElementById('categories-list'); 
-const filtersCategories = document.getElementById('filters-categories'); 
-const inputEditCategory = document.getElementById("edit-category-name");
-const btnEditCategory = document.getElementById("btn-edit-category");
-const btnCancelEditCategory = document.getElementById('btn-cancel-edit-category')
-
-
-
-
 //Array DEL OBJETO CATEGORIAS
 let categories = [
     { id: uuid.v4(), nombre: "Comida" },
@@ -419,9 +432,6 @@ const deleteCategory = (category) => {
 };
 
 //Balance
-const balanceGanancia = document.getElementById('balance-ganancia');
-const balanceTotal = document.getElementById('balance-total');
-const balanceGasto = document.getElementById('balance-gasto');
 
 const balanceData = (operaciones) => {
     return operaciones.reduce((balance, operacion) => {
@@ -470,9 +480,6 @@ const balanceHTML = (operaciones) => {
 }
 
 // Filtros
-const filtersType = document.getElementById("filters-type");
-const filtersOrder = document.getElementById("filters-order");
-
 
 const filtrarTipo = (tipo, operaciones) => {
     const result = operaciones.filter((operacion) => operacion.tipo === tipo);
@@ -581,3 +588,189 @@ fechaFiltros.addEventListener('change', filtrarOperaciones);
 filtersOrder.addEventListener('change', filtrarOperaciones);
 
 
+//Reportes
+
+const reportes = (operaciones) => {
+    if (
+      filtrarTipo("Ganancia", operaciones).length &&
+      filtrarTipo("Gasto", operaciones).length
+    ) {
+      sinReportes.classList.add("is-hidden");
+      conReportes.classList.remove("is-hidden");
+    } else {
+      sinReportes.classList.remove("is-hidden");
+      conReportes.classList.add("is-hidden");
+    }
+    gastosGananciasCateg(operaciones);
+    gastosGananciasMes(operaciones);
+  };
+
+  
+let resultGastosGananciasCateg = {};
+
+const gastosGananciasCateg = (operaciones) =>{
+  const parcial = [];
+
+  for (let i = 0; i < categories.length; i++) {
+    const categoriaGanancia = operaciones.filter(operacion => operacion.categoria === categories[i].nombre && operacion.tipo === 'Ganancia').reduce((inicial, current) => Number(inicial) + Number(current.monto) ,0)
+
+    const categoriaGasto = operaciones.filter(operacion => operacion.categoria === categories[i].nombre && operacion.tipo === 'Gasto').reduce((inicial, current) => Number(inicial) + Number(current.monto) ,0)
+
+    const categoriaBalance = categoriaGanancia + categoriaGasto
+    parcial.push({nombre: categories[i].nombre, ganancia: categoriaGanancia, gasto: categoriaGasto, balance: categoriaBalance})
+  }
+
+  resultGastosGananciasCateg = parcial.filter(elemen => elemen.ganancia > 0 || elemen.gasto < 0 )
+  console.log(resultGastosGananciasCateg);
+
+  const max = Math.max(...resultGastosGananciasCateg.map(valor => valor.ganancia))
+  const mayorGanancia = resultGastosGananciasCateg.find(elemen => elemen.ganancia === max)
+  resumenHTML(mayorGanancia, resumenCategGanancia, 'ganancia', 'has-text-success')
+
+  const min = Math.min(...resultGastosGananciasCateg.map(valor => valor.gasto))
+  const mayorGasto = resultGastosGananciasCateg.find(elemen => elemen.gasto === min)
+  resumenHTML(mayorGasto, resumenCategGasto, 'gasto', 'has-text-danger')
+
+  
+  const maxBalance = Math.max(...resultGastosGananciasCateg.map(valor => valor.balance))
+  const mayorBalance = resultGastosGananciasCateg.find(elemen => elemen.balance === maxBalance)
+  resumenHTML(mayorBalance, resumenCategBalance, 'balance')
+
+  
+
+  totalesPorCategHTML(resultGastosGananciasCateg)
+  return resultGastosGananciasCateg
+ 
+};
+
+
+const totalesPorCategHTML = (array) =>{
+  reporteTotalCateg.innerHTML = " ";
+  for (let i = 0; i < array.length; i++) {
+    const box = `
+    <div class="columns has-text-weight-medium m-0 is-mobile">
+            <div class="column has-text-centered is-3">${array[i].nombre}</div>
+            <div class="column has-text-centered has-text-success is-3">$${array[i].ganancia}</div>
+            <div class="column has-text-centered has-text-danger is-3">$${array[i].gasto}</div>
+            <div class="column has-text-centered is-3">$${array[i].balance}</div>
+          </div>
+    `
+    reporteTotalCateg.insertAdjacentHTML("beforeend", box);
+    
+  }
+}
+
+const resumenHTML = (objeto, caja, tipo, color) => {
+  caja.innerHTML = ' ';
+ 
+  const box = `
+  <div class="columns" >
+  <div class="column"><span class="has-background-info-dark is-size-7 has-text-white radius p-1">${objeto.nombre}</span></div>
+    <div class="column ${color}">$${objeto[tipo]}</div>
+  </div>
+  `
+  caja.insertAdjacentHTML("beforeend", box);
+}
+
+// Reporte por mes
+
+const obtenerResumenMeses = (operaciones) => {
+    const resumen = {
+      mayorGanancia: {
+        fecha: "",
+        monto: 0,
+      },
+      mayorGasto: {
+        fecha: "",
+        monto: 0,
+      },
+    };
+  
+    return operaciones.reduce((resumen, operacion) => {
+      if (
+        operacion.tipo === "Ganancia" &&
+        operacion.monto > resumen.mayorGanancia.monto
+      ) {
+        resumen.mayorGanancia.fecha = operacion.fecha;
+        resumen.mayorGanancia.monto = operacion.monto;
+      }
+  
+      if (
+        operacion.tipo === "Gasto" &&
+        operacion.monto < resumen.mayorGasto.monto
+      ) {
+        resumen.mayorGasto.fecha = operacion.fecha;
+        resumen.mayorGasto.monto = operacion.monto;
+      }
+  
+      resumenMesesHTML(resumen, resumenMesGanancia, "mayorGanancia","has-text-success");
+      resumenMesesHTML(resumen, resumenMesGasto, "mayorGasto", "has-text-danger");
+      return resumen;
+    }, resumen);
+  };
+  
+  const resumenMesesHTML = (objeto, caja, tipo, color) => {
+    caja.innerHTML = " ";
+  
+    const box = `
+    <div class="columns has-text-weight-medium m-0 is-mobile">
+      <div class="column has-text-right is-9 m-0">${objeto[tipo].fecha}</div>
+      <div class="column has-text-right m-0 ${color}">$${objeto[tipo].monto}</div>
+    </div>
+    `;
+    caja.insertAdjacentHTML("beforeend", box);
+  };
+  
+  const totalesPorMesHTML = (objeto) => {
+    reporteTotalMes.innerHTML = "";
+  
+    for (const key in objeto) {
+      const box = `
+      <div class="columns has-text-weight-medium m-0 is-mobile">
+              <div class="column has-text-centered is-3">${key}</div>
+              <div class="column has-text-centered has-text-success is-3">$${objeto[key].ganancia}</div>
+              <div class="column has-text-centered has-text-danger is-3">$${objeto[key].gasto}</div>
+              <div class="column has-text-centered is-3">$${objeto[key].balance}</div>
+            </div>
+      `;
+      reporteTotalMes.insertAdjacentHTML("beforeend", box);
+    }
+  };
+  
+  const obtenerTotalesPorMes = (operaciones) => {
+    return operaciones.reduce((totales, operacion) => {
+      let fecha = new Date(operacion.fecha);
+      fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
+      const mes_Anio = `${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
+  
+      if (!totales[mes_Anio]) {
+        totales[mes_Anio] = {
+          ganancia: 0,
+          gasto: 0,
+          balance: 0,
+        };
+      }
+  
+      totales[mes_Anio][operacion.tipo.toLowerCase()] += Number(operacion.monto);
+  
+      if (operacion.tipo === "Ganancia") {
+        totales[mes_Anio].balance += Number(operacion.monto);
+      } else {
+        totales[mes_Anio].balance += Number(operacion.monto);
+      }
+  
+      totalesPorMesHTML(totales);
+  
+      return totales;
+    }, {});
+  };
+  
+  
+  const gastosGananciasMes = (operaciones) => {
+    obtenerResumenMeses(operaciones);
+    obtenerTotalesPorMes(operaciones);
+  };
+  
+  
+  reportes(operations);
+  filtrarOperaciones();
