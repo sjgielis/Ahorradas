@@ -1,4 +1,3 @@
-prompt("funciono")
 const btnNewOperation = document.getElementById('btn-new-operation') 
 const btnCancelOperation = document.getElementById('btn-cancel-operation'); 
 const btnAddOperation = document.getElementById('btn-add-operation');
